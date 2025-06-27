@@ -1,2 +1,152 @@
 model/
-Usuario.java
+package model;
+
+public class Usuario {
+    private int id;
+    private String nombre;
+    private String email;
+    private String contraseña;
+    private String preferencias;
+
+    public Usuario(String nombre, String email, String contraseña, String preferencias) {
+        this.nombre = nombre;
+        this.email = email;
+        this.contraseña = contraseña;
+        this.preferencias = preferencias;
+    }
+
+    public void mostrarInfo() {
+        System.out.println("Usuario: " + nombre + " - Email: " + email);
+    }
+
+    // Getters y setters omitidos para brevedad
+}
+
+package model;
+
+public class Videojuego {
+    protected String titulo;
+    protected String genero;
+    protected String plataforma;
+    protected String estado;
+
+    public Videojuego(String titulo, String genero, String plataforma, String estado) {
+        this.titulo = titulo;
+        this.genero = genero;
+        this.plataforma = plataforma;
+        this.estado = estado;
+    }
+
+    public void mostrar() {
+        System.out.println(titulo + " [" + genero + "] - " + plataforma + " - " + estado);
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+}
+
+
+package model;
+
+public class VideojuegoFisico extends Videojuego {
+    private String formato;
+
+    public VideojuegoFisico(String titulo, String genero, String plataforma, String estado, String formato) {
+        super(titulo, genero, plataforma, estado);
+        this.formato = formato;
+    }
+
+    @Override
+    public void mostrar() {
+        super.mostrar();
+        System.out.println("Formato físico: " + formato);
+    }
+}
+
+
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Inventario {
+    private List<Videojuego> juegos;
+
+    public Inventario() {
+        juegos = new ArrayList<>();
+    }
+
+    public void agregar(Videojuego juego) throws Exception {
+        for (Videojuego v : juegos) {
+            if (v.getTitulo().equalsIgnoreCase(juego.getTitulo())) {
+                throw new Exception("Error: El juego ya existe en el inventario.");
+            }
+        }
+        juegos.add(juego);
+    }
+
+    public void mostrarTodo() {
+        for (Videojuego juego : juegos) {
+            juego.mostrar();
+        }
+    }
+
+
+package app;
+
+import model.*;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Inventario inventario = new Inventario();
+        Scanner sc = new Scanner(System.in);
+        int opcion;
+
+        do {
+            System.out.println("\n=== Menú ===");
+            System.out.println("1. Agregar videojuego");
+            System.out.println("2. Mostrar inventario");
+            System.out.println("0. Salir");
+            System.out.print("Selecciona una opción: ");
+            opcion = sc.nextInt(); sc.nextLine();
+
+            switch (opcion) {
+                case 1:
+                    try {
+                        System.out.print("Título: ");
+                        String titulo = sc.nextLine();
+                        System.out.print("Género: ");
+                        String genero = sc.nextLine();
+                        System.out.print("Plataforma: ");
+                        String plataforma = sc.nextLine();
+                        System.out.print("Estado: ");
+                        String estado = sc.nextLine();
+
+                        Videojuego juego = new Videojuego(titulo, genero, plataforma, estado);
+                        inventario.agregar(juego);
+                        System.out.println("✔ Juego agregado con éxito.");
+
+                    } catch (Exception e) {
+                        System.out.println("❌ " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    inventario.mostrarTodo();
+                    break;
+
+                case 0:
+                    System.out.println("👋 Saliendo...");
+                    break;
+
+                default:
+                    System.out.println("⚠ Opción inválida.");
+            }
+
+        } while (opcion != 0);
+        sc.close();
+    }
+}
